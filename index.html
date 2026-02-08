@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ERA estudio | Diseño Gráfico & Ilustración</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        serif: ['Playfair Display', 'serif'],
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        'charcoal': '#1a1a1a',
+                        'off-white': '#f9f9f9',
+                        'accent-gray': '#888888',
+                        'urban-blue': '#2E86AB', /* Un azul urbano para acentos */
+                    },
+                    animation: {
+                        'fade-in-up': 'fadeInUp 1s ease-out forwards',
+                        'reveal': 'reveal 1.2s cubic-bezier(0.77, 0, 0.175, 1) forwards',
+                        'glitch': 'glitch 1s linear infinite',
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    },
+                    keyframes: {
+                        fadeInUp: {
+                            '0%': { opacity: '0', transform: 'translateY(20px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        },
+                        reveal: {
+                            '0%': { transform: 'translateY(100%)' },
+                            '100%': { transform: 'translateY(0)' }
+                        },
+                        glitch: {
+                            '2%, 64%': { transform: 'translate(2px,0) skew(0deg)' },
+                            '4%, 60%': { transform: 'translate(-2px,0) skew(0deg)' },
+                            '62%': { transform: 'translate(0,0) skew(5deg)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;800;900&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Urban Noise Texture Overlay */
+        .noise-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9999;
+            opacity: 0.05;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
+
+        body {
+            background-color: #ffffff;
+            color: #1a1a1a;
+            cursor: default; /* Consider custom cursor later */
+        }
+        
+        .hover-underline-animation {
+            display: inline-block;
+            position: relative;
+        }
+
+        .hover-underline-animation::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            transform: scaleX(0);
+            height: 2px; /* Thicker for bold look */
+            bottom: 0;
+            left: 0;
+            background-color: #1a1a1a;
+            transform-origin: bottom right;
+            transition: transform 0.4s cubic-bezier(0.86, 0, 0.07, 1);
+        }
+
+        .hover-underline-animation:hover::after {
+            transform: scaleX(1);
+            transform-origin: bottom left;
+        }
+
+        /* Hide scrollbar for clean look */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #ffffff;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1a1a1a;
+            border-radius: 4px;
+        }
+
+        .image-hover-zoom {
+            overflow: hidden;
+        }
+        .image-hover-zoom img {
+            transition: transform 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        .image-hover-zoom:hover img {
+            transform: scale(1.05);
+        }
+
+        /* Submenu styling */
+        .submenu {
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(10px);
+            transition: all 0.3s ease-in-out;
+        }
+        .group:hover .submenu {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        /* Glitch Effect Classes */
+        .glitch-wrapper {
+            position: relative;
+        }
+        .glitch-wrapper::before,
+        .glitch-wrapper::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+<body class="antialiased font-sans selection:bg-black selection:text-white relative">
+
+    <!-- Noise Texture -->
+    <div class="noise-overlay"></div>
+
+    <!-- Preloader (Urban Vibe) -->
+    <div id="preloader" class="fixed inset-0 bg-white z-[100] flex items-center justify-center transition-opacity duration-1000">
+        <div class="text-center">
+            <!-- Logo in preloader -->
+            <img src="SABIO cara.png" onerror="this.src='https://images.unsplash.com/photo-1544502062-f82887f03d1c?q=80&w=200&auto=format&fit=crop'" alt="Sabio Logo" class="w-32 h-auto mx-auto mb-4 animate-bounce">
+            <h2 class="text-4xl font-extrabold tracking-tighter animate-pulse">CARGANDO...</h2>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <header class="fixed w-full top-0 z-50 transition-all duration-300 bg-white/90 backdrop-blur-md border-b border-gray-100" id="navbar">
+        <div class="max-w-7xl mx-auto px-6 sm:px-12 h-24 flex items-center justify-between">
+            <!-- Logo Image in Navbar -->
+            <a href="#" class="flex items-center gap-3 z-50 relative group">
+                <!-- Using the user's logo here. Fallback added for preview. -->
+                <img src="SABIO cara.png" onerror="this.src='https://images.unsplash.com/photo-1544502062-f82887f03d1c?q=80&w=100&auto=format&fit=crop'" alt="Sabio Logo" class="h-12 w-auto object-contain transition-transform duration-300 group-hover:rotate-12 group-hover:scale-110">
+                <span class="text-2xl font-sans font-extrabold tracking-tighter">ERA estudio</span>
+            </a>
+
+            <!-- Desktop Menu -->
+            <nav class="hidden md:flex space-x-12 items-center font-bold">
+                <a href="#inicio" class="text-sm uppercase tracking-widest hover-underline-animation">Inicio</a>
+                
+                <!-- Dropdown -->
+                <div class="relative group py-6 cursor-pointer">
+                    <span class="text-sm uppercase tracking-widest hover-underline-animation flex items-center gap-1">
+                        Portafolio
+                    </span>
+                    <div class="submenu absolute top-full left-0 w-56 bg-black text-white shadow-2xl p-6 flex flex-col gap-4 transform rotate-1 border-2 border-white">
+                        <a href="#branding" class="text-sm text-gray-400 hover:text-white transition-colors hover:translate-x-2 duration-200">Branding & Identidad</a>
+                        <a href="#ilustracion" class="text-sm text-gray-400 hover:text-white transition-colors hover:translate-x-2 duration-200">Ilustración Digital</a>
+                        <a href="#editorial" class="text-sm text-gray-400 hover:text-white transition-colors hover:translate-x-2 duration-200">Diseño Editorial</a>
+                    </div>
+                </div>
+
+                <a href="#estudio" class="text-sm uppercase tracking-widest hover-underline-animation">El Estudio</a>
+                <a href="#contacto" class="px-6 py-3 bg-black text-white text-xs font-bold uppercase tracking-widest hover:bg-urban-blue transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1">Contacto</a>
+            </nav>
+
+            <!-- Mobile Menu Button -->
+            <button id="mobile-menu-btn" class="md:hidden z-50 focus:outline-none">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+            </button>
+        </div>
+
+        <!-- Mobile Menu Overlay -->
+        <div id="mobile-menu" class="fixed inset-0 bg-white z-40 flex flex-col justify-center items-center opacity-0 pointer-events-none transition-opacity duration-300">
+            <nav class="flex flex-col gap-8 text-center">
+                <a href="#inicio" class="text-4xl font-extrabold font-sans mobile-link hover:text-urban-blue">Inicio</a>
+                <a href="#branding" class="text-4xl font-extrabold font-sans mobile-link hover:text-urban-blue">Portafolio</a>
+                <a href="#estudio" class="text-4xl font-extrabold font-sans mobile-link hover:text-urban-blue">Estudio</a>
+                <a href="#contacto" class="text-4xl font-extrabold font-sans mobile-link hover:text-urban-blue">Contacto</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="inicio" class="relative min-h-screen flex items-center pt-20 overflow-hidden bg-white">
+        
+        <!-- Giant Watermark Logo Background -->
+        <div class="absolute right-0 top-1/2 -translate-y-1/2 opacity-5 pointer-events-none z-0">
+            <img src="SABIO cara.png" onerror="this.src='https://images.unsplash.com/photo-1544502062-f82887f03d1c?q=80&w=800&auto=format&fit=crop'" alt="" class="h-[120vh] w-auto object-contain grayscale mix-blend-multiply">
+        </div>
+
+        <div class="max-w-7xl mx-auto px-6 sm:px-12 relative z-10 w-full grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            
+            <!-- Text Content -->
+            <div class="max-w-4xl order-2 lg:order-1">
+                <p class="text-sm font-bold uppercase tracking-[0.3em] text-black mb-6 opacity-0 animate-fade-in-up flex items-center gap-2" style="animation-delay: 0.2s;">
+                    <span class="block w-8 h-1 bg-black"></span> Diseño & Dirección de Arte
+                </p>
+                <h1 class="text-6xl md:text-8xl lg:text-9xl font-sans font-black leading-[0.9] mb-8 opacity-0 animate-fade-in-up tracking-tighter" style="animation-delay: 0.4s;">
+                    CREA<br>
+                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-black to-gray-500 italic pr-4">RUIDO</span> <br>
+                    VISUAL.
+                </h1>
+                <p class="text-xl md:text-2xl font-medium text-gray-600 max-w-xl leading-relaxed opacity-0 animate-fade-in-up" style="animation-delay: 0.6s;">
+                    Identidades con actitud. Ilustraciones que gritan. Creamos marcas que no piden permiso.
+                </p>
+                
+                <div class="mt-12 opacity-0 animate-fade-in-up flex flex-wrap gap-6" style="animation-delay: 0.8s;">
+                    <a href="#portfolio" class="px-8 py-4 bg-black text-white font-bold text-sm uppercase tracking-widest hover:bg-gray-800 transition-all hover:scale-105 shadow-xl">
+                        Ver Trabajos
+                    </a>
+                </div>
+            </div>
+
+            <!-- Floating Interactive Logo (Parallax) -->
+            <div id="hero-logo-container" class="order-1 lg:order-2 flex justify-center lg:justify-end relative h-[50vh] lg:h-auto opacity-0 animate-fade-in-up" style="animation-delay: 0.5s;">
+                <!-- This logo will follow the mouse -->
+                <div id="floating-logo" class="relative z-10 transition-transform duration-100 ease-out will-change-transform">
+                    <img src="SABIO cara.png" onerror="this.src='https://images.unsplash.com/photo-1544502062-f82887f03d1c?q=80&w=600&auto=format&fit=crop'" 
+                         alt="Sabio Mascot" 
+                         class="w-64 md:w-96 lg:w-[32rem] object-contain drop-shadow-2xl filter contrast-125 hover:brightness-110 transition-all">
+                         
+                     <!-- Decorative graffiti elements behind -->
+                     <div class="absolute -top-10 -right-10 w-32 h-32 bg-yellow-400 rounded-full mix-blend-multiply opacity-50 blur-2xl animate-pulse"></div>
+                     <div class="absolute -bottom-10 -left-10 w-40 h-40 bg-blue-500 rounded-full mix-blend-multiply opacity-50 blur-2xl animate-pulse" style="animation-delay: 1s;"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Selected Works (Grid) -->
+    <section id="portfolio" class="py-32 bg-black text-white relative">
+        <div class="max-w-7xl mx-auto px-6 sm:px-12 relative z-10">
+            <div class="flex flex-col md:flex-row justify-between items-end mb-24 border-b border-gray-800 pb-8">
+                <h2 class="text-5xl md:text-7xl font-sans font-black tracking-tighter uppercase">Trabajos<br><span class="text-gray-600 outline-text">Recientes</span></h2>
+                <span class="mt-4 md:mt-0 text-sm font-mono text-gray-400">[2023 — 2025]</span>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-32">
+                
+                <!-- Project 1 -->
+                <div class="group cursor-pointer">
+                    <div class="image-hover-zoom aspect-[4/5] bg-gray-900 mb-6 relative overflow-hidden border border-gray-800">
+                        <img src="https://images.unsplash.com/photo-1600607686527-6fb886090705?q=80&w=2000&auto=format&fit=crop" alt="Proyecto Editorial" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700">
+                    </div>
+                    <div class="flex justify-between items-start pt-2">
+                        <div>
+                            <h3 class="text-3xl font-bold mb-1 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-white group-hover:to-gray-500 transition-all">Lumina Architects</h3>
+                            <p class="text-sm text-gray-500 font-mono uppercase">Identidad / Branding</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Project 2 (Offset layout) -->
+                <div class="group cursor-pointer md:mt-32">
+                    <div class="image-hover-zoom aspect-[4/5] bg-gray-900 mb-6 relative overflow-hidden border border-gray-800">
+                        <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1964&auto=format&fit=crop" alt="Abstract Art" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700">
+                    </div>
+                    <div class="flex justify-between items-start pt-2">
+                        <div>
+                            <h3 class="text-3xl font-bold mb-1 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-white group-hover:to-gray-500 transition-all">Vogue Abstract</h3>
+                            <p class="text-sm text-gray-500 font-mono uppercase">Ilustración / Editorial</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Project 3 -->
+                <div class="group cursor-pointer">
+                    <div class="image-hover-zoom aspect-[4/3] bg-gray-900 mb-6 relative overflow-hidden border border-gray-800">
+                        <img src="https://images.unsplash.com/photo-1549923746-c502d488b3ea?q=80&w=2071&auto=format&fit=crop" alt="Packaging" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700">
+                    </div>
+                    <div class="flex justify-between items-start pt-2">
+                        <div>
+                            <h3 class="text-3xl font-bold mb-1 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-white group-hover:to-gray-500 transition-all">Sérum Nº5</h3>
+                            <p class="text-sm text-gray-500 font-mono uppercase">Packaging / Print</p>
+                        </div>
+                    </div>
+                </div>
+
+                 <!-- Project 4 -->
+                 <div class="group cursor-pointer md:mt-32">
+                    <div class="image-hover-zoom aspect-[4/3] bg-gray-900 mb-6 relative overflow-hidden border border-gray-800">
+                        <img src="https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?q=80&w=1974&auto=format&fit=crop" alt="UI Design" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700">
+                    </div>
+                    <div class="flex justify-between items-start pt-2">
+                        <div>
+                            <h3 class="text-3xl font-bold mb-1 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-white group-hover:to-gray-500 transition-all">Mono App</h3>
+                            <p class="text-sm text-gray-500 font-mono uppercase">UI/UX / Digital</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            
+            <div class="text-center mt-32">
+                <a href="#" class="px-10 py-4 border border-white text-white font-bold text-xs uppercase tracking-widest hover:bg-white hover:text-black transition-all duration-300 inline-block">Explorar Archivo</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services / Philosophy -->
+    <section id="estudio" class="py-32 bg-off-white relative">
+         <!-- Abstract decoration -->
+         <div class="absolute left-0 top-20 w-32 h-32 bg-gray-200 rounded-full mix-blend-multiply filter blur-3xl opacity-50"></div>
+
+        <div class="max-w-7xl mx-auto px-6 sm:px-12 grid grid-cols-1 md:grid-cols-12 gap-12">
+            <div class="md:col-span-4">
+                <h2 class="text-sm font-bold uppercase tracking-widest text-gray-400 mb-4">El Manifiesto</h2>
+                <div class="w-12 h-2 bg-black mb-8"></div>
+                <p class="font-sans font-black text-4xl leading-tight">
+                    NO DISEÑAMOS <br> PARA GUSTAR,<br> DISEÑAMOS <br> PARA IMPACTAR.
+                </p>
+            </div>
+            
+            <div class="md:col-span-1"></div>
+
+            <div class="md:col-span-7">
+                <p class="text-xl font-medium text-gray-800 mb-16 leading-8">
+                    En ERA estudio, fusionamos la estética callejera con la precisión digital. Somos traductores de cultura. Tomamos tu visión y le damos un lenguaje visual que no se puede ignorar.
+                </p>
+
+                <div class="space-y-8">
+                    <!-- Service Item -->
+                    <div class="flex items-center justify-between border-b-2 border-black pb-6 group cursor-pointer hover:bg-gray-100 transition-colors px-2">
+                        <h3 class="text-2xl font-black uppercase group-hover:pl-4 transition-all duration-300">Dirección de Arte</h3>
+                        <span class="text-4xl font-black text-gray-200 group-hover:text-black transition-colors">01</span>
+                    </div>
+                    <!-- Service Item -->
+                    <div class="flex items-center justify-between border-b-2 border-black pb-6 group cursor-pointer hover:bg-gray-100 transition-colors px-2">
+                        <h3 class="text-2xl font-black uppercase group-hover:pl-4 transition-all duration-300">Identidad de Marca</h3>
+                         <span class="text-4xl font-black text-gray-200 group-hover:text-black transition-colors">02</span>
+                    </div>
+                    <!-- Service Item -->
+                    <div class="flex items-center justify-between border-b-2 border-black pb-6 group cursor-pointer hover:bg-gray-100 transition-colors px-2">
+                        <h3 class="text-2xl font-black uppercase group-hover:pl-4 transition-all duration-300">Diseño Editorial</h3>
+                         <span class="text-4xl font-black text-gray-200 group-hover:text-black transition-colors">03</span>
+                    </div>
+                     <!-- Service Item -->
+                     <div class="flex items-center justify-between border-b-2 border-black pb-6 group cursor-pointer hover:bg-gray-100 transition-colors px-2">
+                        <h3 class="text-2xl font-black uppercase group-hover:pl-4 transition-all duration-300">Desarrollo Web</h3>
+                         <span class="text-4xl font-black text-gray-200 group-hover:text-black transition-colors">04</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Marquee Banner -->
+    <div class="py-16 bg-urban-blue overflow-hidden whitespace-nowrap border-y-4 border-black transform -skew-y-2">
+        <div class="inline-block animate-[scroll_20s_linear_infinite]">
+            <span class="text-white font-black text-6xl mx-8 italic stroke-black text-shadow">ESTRATEGIA</span>
+            <span class="text-black font-black text-6xl mx-8">✦</span>
+            <span class="text-white font-black text-6xl mx-8 italic">DISEÑO</span>
+            <span class="text-black font-black text-6xl mx-8">✦</span>
+            <span class="text-white font-black text-6xl mx-8 italic">ILUSTRACIÓN</span>
+            <span class="text-black font-black text-6xl mx-8">✦</span>
+            <span class="text-white font-black text-6xl mx-8 italic">CULTURA</span>
+            <span class="text-black font-black text-6xl mx-8">✦</span>
+             <span class="text-white font-black text-6xl mx-8 italic">ESTRATEGIA</span>
+            <span class="text-black font-black text-6xl mx-8">✦</span>
+            <span class="text-white font-black text-6xl mx-8 italic">DISEÑO</span>
+            <span class="text-black font-black text-6xl mx-8">✦</span>
+            <span class="text-white font-black text-6xl mx-8 italic">ILUSTRACIÓN</span>
+        </div>
+    </div>
+
+    <!-- Contact Section -->
+    <section id="contacto" class="py-32 bg-white">
+        <div class="max-w-3xl mx-auto px-6 text-center">
+            <div class="mb-8 inline-block">
+                 <img src="SABIO cara.png" onerror="this.src='https://images.unsplash.com/photo-1544502062-f82887f03d1c?q=80&w=100&auto=format&fit=crop'" alt="Logo" class="w-32 h-auto mx-auto object-contain hover:scale-110 transition-transform duration-300">
+            </div>
+            <p class="text-sm font-bold uppercase tracking-widest text-gray-400 mb-6">Let's talk business</p>
+            <h2 class="text-5xl md:text-7xl font-sans font-black mb-12 tracking-tight">¿HACEMOS HISTORIA?</h2>
+            
+            <form class="text-left max-w-lg mx-auto space-y-8 bg-gray-50 p-8 border-2 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+                <div class="relative z-0 w-full group">
+                    <input type="text" name="name" id="name" class="block py-2.5 px-0 w-full text-lg text-black bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-black peer font-bold" placeholder=" " required />
+                    <label for="name" class="peer-focus:font-bold absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-black peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6 uppercase">Nombre</label>
+                </div>
+                <div class="relative z-0 w-full group">
+                    <input type="email" name="email" id="email" class="block py-2.5 px-0 w-full text-lg text-black bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-black peer font-bold" placeholder=" " required />
+                    <label for="email" class="peer-focus:font-bold absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-black peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6 uppercase">Email</label>
+                </div>
+                 <div class="relative z-0 w-full group">
+                    <textarea name="message" id="message" rows="2" class="block py-2.5 px-0 w-full text-lg text-black bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-black peer resize-none font-bold" placeholder=" " required></textarea>
+                    <label for="message" class="peer-focus:font-bold absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-black peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6 uppercase">El Plan</label>
+                </div>
+
+                <div class="pt-8 text-center">
+                    <button type="submit" class="w-full py-4 bg-black text-white text-sm font-black uppercase tracking-widest hover:bg-urban-blue transition-colors shadow-lg">Enviar Mensaje</button>
+                </div>
+            </form>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="relative bg-neutral-900 text-white py-24 overflow-hidden border-t-8 border-urban-blue">
+        <!-- Watermark Background -->
+        <div class="absolute inset-0 z-0 opacity-20 pointer-events-none grayscale mix-blend-overlay">
+            <img src="SABIO cara.png" onerror="this.src='https://images.unsplash.com/photo-1480714378408-67cf0d13bc1b?q=80&w=2070&auto=format&fit=crop'" alt="Urban Texture" class="w-full h-full object-cover">
+        </div>
+        
+        <div class="max-w-7xl mx-auto px-6 sm:px-12 relative z-10 flex flex-col md:flex-row justify-between items-center gap-6">
+            <div class="flex items-center gap-4">
+                 <img src="SABIO cara.png" onerror="this.src='https://images.unsplash.com/photo-1544502062-f82887f03d1c?q=80&w=100&auto=format&fit=crop'" alt="Logo" class="w-12 h-12 grayscale brightness-200">
+                <div class="text-4xl font-sans font-black tracking-tighter text-white">ERA estudio.</div>
+            </div>
+            
+            <div class="flex gap-8">
+                <a href="https://www.youtube.com/" class="text-xs font-bold uppercase tracking-widest text-gray-400 hover:text-urban-blue transition-colors">YouTube</a>
+                <a href="https://wa.me/1234567890" class="text-xs font-bold uppercase tracking-widest text-gray-400 hover:text-urban-blue transition-colors">WhatsApp</a>
+                <a href="mailto:hola@erastudio.com" class="text-xs font-bold uppercase tracking-widest text-gray-400 hover:text-urban-blue transition-colors">Gmail</a>
+            </div>
+
+            <div class="text-xs text-gray-500 font-mono">
+                &copy; 2025 ERA estudio.
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script>
+        // Custom Tailwind animation for marquee
+        tailwind.config.theme.extend.animation.scroll = 'scroll 25s linear infinite';
+        tailwind.config.theme.extend.keyframes.scroll = {
+            '0%': { transform: 'translateX(0)' },
+            '100%': { transform: 'translateX(-50%)' },
+        };
+
+        // Preloader Logic
+        window.addEventListener('load', () => {
+            const preloader = document.getElementById('preloader');
+            setTimeout(() => {
+                preloader.style.opacity = '0';
+                setTimeout(() => {
+                    preloader.style.display = 'none';
+                }, 1000);
+            }, 1500); // Show preloader for 1.5s
+        });
+
+        // Scroll Reveal Logic
+        document.addEventListener('DOMContentLoaded', () => {
+            const observerOptions = {
+                root: null,
+                rootMargin: '0px',
+                threshold: 0.1
+            };
+
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('animate-fade-in-up');
+                        entry.target.style.opacity = "1";
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, observerOptions);
+
+            // Select elements to animate
+            document.querySelectorAll('section > div').forEach(el => {
+                el.style.opacity = "0"; // Initial state
+                observer.observe(el);
+            });
+
+            // Mobile Menu Logic
+            const btn = document.getElementById('mobile-menu-btn');
+            const menu = document.getElementById('mobile-menu');
+            const links = document.querySelectorAll('.mobile-link');
+            let isMenuOpen = false;
+
+            btn.addEventListener('click', () => {
+                isMenuOpen = !isMenuOpen;
+                if (isMenuOpen) {
+                    menu.classList.remove('pointer-events-none', 'opacity-0');
+                    document.body.style.overflow = 'hidden';
+                    btn.innerHTML = '<svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>';
+                } else {
+                    menu.classList.add('pointer-events-none', 'opacity-0');
+                    document.body.style.overflow = 'auto';
+                    btn.innerHTML = '<svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>';
+                }
+            });
+
+            links.forEach(link => {
+                link.addEventListener('click', () => {
+                    isMenuOpen = false;
+                    menu.classList.add('pointer-events-none', 'opacity-0');
+                    document.body.style.overflow = 'auto';
+                    btn.innerHTML = '<svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>';
+                });
+            });
+
+            // Navbar scroll effect
+            const navbar = document.getElementById('navbar');
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 50) {
+                    navbar.classList.add('shadow-md');
+                    navbar.classList.replace('h-24', 'h-20');
+                } else {
+                    navbar.classList.remove('shadow-md');
+                    navbar.classList.replace('h-20', 'h-24');
+                }
+            });
+
+            // Parallax Logo Effect
+            const container = document.getElementById('hero-logo-container');
+            const logo = document.getElementById('floating-logo');
+            
+            if(container && logo) {
+                document.addEventListener('mousemove', (e) => {
+                    const x = (window.innerWidth - e.pageX*2) / 90;
+                    const y = (window.innerHeight - e.pageY*2) / 90;
+                    
+                    logo.style.transform = `translateX(${x}px) translateY(${y}px)`;
+                });
+            }
+        });
+    </script>
+</body>
+</html>
